@@ -1,0 +1,16 @@
+{
+  "name": "glass-check",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@netlify/functions": "^2.8.1",
+    "uuid": "^10.0.0"
+  }
+}
