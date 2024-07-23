@@ -71,7 +71,6 @@
         <button class="btn" onclick="submitChecklist()">Submit</button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -129,19 +128,10 @@
         }
 
         function sendEmail(data) {
-            emailjs.init('YOUR_USER_ID'); // Replace with your EmailJS user ID
-
-            const emailParams = {
-                to_name: 'Recipient Name',
-                message_html: JSON.stringify(data, null, 2)
-            };
-
-            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', emailParams)
-                .then(() => {
-                    alert('Checklist submitted successfully!');
-                }, (error) => {
-                    console.error('Failed to send email:', error);
-                });
+            const email = 'support@2020glass.com';
+            const subject = 'Checklist Results';
+            const body = encodeURIComponent('Incomplete Items:\n\n' + JSON.stringify(data, null, 2));
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
         }
     </script>
 </body>
