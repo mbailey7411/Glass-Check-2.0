@@ -11,6 +11,11 @@ app.use(express.static('public'));
 // In-memory storage
 const dataStorage = {};
 
+// Root route
+app.get('/', (req, res) => {
+    res.send('Welcome to the Glass Check API');
+});
+
 app.post('/api/upload', (req, res) => {
     try {
         if (!req.files || Object.keys(req.files).length === 0) {
