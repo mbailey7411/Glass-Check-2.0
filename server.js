@@ -27,7 +27,7 @@ app.post('/upload', (req, res) => {
         if (err) {
             return res.status(500).send('Failed to save data.');
         }
-        res.send({ url: `https://your-server.com/mobile-check?id=${uniqueId}` });
+        res.send({ url: `https://mbailey7411.github.io/Glass-Check-2.0/mobile-check.html?id=${uniqueId}` });
     });
 });
 
@@ -111,7 +111,6 @@ app.get('/mobile-check', (req, res) => {
                     <button class="btn" onclick="submitChecklist()">Submit</button>
                 </div>
 
-                <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
                         const data = ${data};
@@ -168,19 +167,10 @@ app.get('/mobile-check', (req, res) => {
                     }
 
                     function sendEmail(data) {
-                        emailjs.init('YOUR_USER_ID'); // Replace with your EmailJS user ID
-
-                        const emailParams = {
-                            to_name: 'Recipient Name',
-                            message_html: JSON.stringify(data, null, 2)
-                        };
-
-                        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', emailParams)
-                            .then(() => {
-                                alert('Checklist submitted successfully!');
-                            }, (error) => {
-                                console.error('Failed to send email:', error);
-                            });
+                        const email = 'support@2020glass.com';
+                        const subject = 'Checklist Results';
+                        const body = encodeURIComponent('Incomplete Items:\n\n' + JSON.stringify(data, null, 2));
+                        window.location.href = \`mailto:\${email}?subject=\${subject}&body=\${body}\`;
                     }
                 </script>
             </body>
