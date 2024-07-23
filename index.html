@@ -194,15 +194,21 @@
             const qrCodeContainer = document.getElementById('qrCode');
             qrCodeContainer.innerHTML = '';
 
-            const qrData = JSON.stringify(processedData);
-            const baseUrl = 'https://your-server.com/mobile-check?data='; // Replace with your server URL
-            const qrLink = baseUrl + encodeURIComponent(qrData);
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://mbailey7411.github.io/Glass-Check-2.0/upload', true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    new QRCode(qrCodeContainer, {
+                        text: response.url,
+                        width: 256,
+                        height: 256
+                    });
+                }
+            };
 
-            new QRCode(qrCodeContainer, {
-                text: qrLink,
-                width: 256,
-                height: 256
-            });
+            xhr.send(JSON.stringify({ data: processedData }));
         }
     </script>
 </body>
