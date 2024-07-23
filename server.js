@@ -13,15 +13,11 @@ const dataStorage = {};
 
 // Root route
 app.get('/', (req, res) => {
-    res.send('Welcome to the Glass Check API');
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 app.post('/api/upload', (req, res) => {
     try {
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send('No files were uploaded.');
-        }
-
         const data = JSON.parse(req.body.data);
         const uniqueId = uuid.v4();
 
@@ -116,7 +112,6 @@ app.get('/api/mobile-check', (req, res) => {
                         <button class="btn" onclick="submitChecklist()">Submit</button>
                     </div>
 
-                    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
                     <script>
                         document.addEventListener('DOMContentLoaded', () => {
                             const data = ${data};
