@@ -103,6 +103,7 @@
 
         function processCSV(file) {
             Papa.parse(file, {
+                header: true,
                 complete: function(results) {
                     const data = results.data;
                     if (!data.length) {
@@ -110,7 +111,7 @@
                         return;
                     }
 
-                    const headers = data[0];
+                    const headers = results.meta.fields;
                     const installNotesIndex = headers.indexOf('Install Notes');
                     const partsIndex = headers.indexOf('Parts');
                     const jobIndex = headers.indexOf('Job #');
@@ -121,25 +122,23 @@
                         return;
                     }
 
-                    processedData = data.slice(1)
-                        .map(row => {
-                            const installNotes = row[installNotesIndex] || '';
-                            const bracketsContent = (installNotes.match(/\[(.*?)\]/g) || []).map(item => item.slice(1, -1));
-                            const nonBracketsContent = installNotes.replace(/\[.*?\]/g, '').trim();
-                            
-                            const parts = (row[partsIndex] || '').replace(/\s?HAH\d{6}(?=[,\s]|$)/g, '').trim();
+                    processedData = data.map(row => {
+                        const installNotes = row['Install Notes'] || '';
+                        const bracketsContent = (installNotes.match(/\[(.*?)\]/g) || []).map(item => item.slice(1, -1));
+                        const nonBracketsContent = installNotes.replace(/\[.*?\]/g, '').trim();
+                        
+                        const parts = (row['Parts'] || '').replace(/\s?HAH\d{6}(?=[,\s]|$)/g, '').trim();
 
-                            return [
-                                '', // Empty first column (for PDF)
-                                bracketsContent.join(' '),
-                                parts,
-                                row[jobIndex] || '',
-                                row[lastNameIndex] || '',
-                                nonBracketsContent,
-                                '' // Issues column
-                            ];
-                        })
-                        .filter(row => row.some(cell => cell.trim() !== '')); // Remove blank rows
+                        return [
+                            '', // Empty first column (for PDF)
+                            bracketsContent.join(' '),
+                            parts,
+                            row['Job #'] || '',
+                            row['Last Name'] || '',
+                            nonBracketsContent,
+                            '' // Issues column
+                        ];
+                    }).filter(row => row.some(cell => cell.trim() !== '')); // Remove blank rows
 
                     // Sort the processed data alphabetically by the Loc column (index 1)
                     processedData.sort((a, b) => a[1].localeCompare(b[1]));
@@ -148,6 +147,7 @@
                 }
             });
         }
+
 
         function displayTable(data) {
             let tableHtml = '<table><tr><th>Loc</th><th>Parts</th><th>Job #</th><th>Last Name</th><th>Other Notes</th><th>Issues</th></tr>';
