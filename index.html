@@ -34,6 +34,24 @@
             padding: 20px;
             margin-bottom: 20px;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        table th:first-child,
+        table td:first-child {
+            width: 15%;
+        }
         .btn {
             display: inline-block;
             padding: 10px 20px;
@@ -62,7 +80,8 @@
         <div id="csvProcessor" class="card">
             <div class="center-content">
                 <input type="file" id="csvFile" accept=".csv" onchange="handleFileSelect(event)">
-                <button class="btn btn-info" onclick="generateQRCode()">Generate QR Code</button>
+                <button class="btn btn-info" onclick="downloadPDF()">Download PDF</button>
+                <button class="btn btn-info" onclick="generateQRCode()">Mobile Check</button>
             </div>
             <div id="output"></div>
             <div id="qrCode"></div>
@@ -138,6 +157,37 @@
             });
             tableHtml += '</table>';
             document.getElementById('output').innerHTML = tableHtml;
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const headers = ['Loc', 'Parts', 'Job #', 'Last Name', 'Other Notes', 'Issues'];
+            const data = processedData.map(row => row.slice(1)); // Remove the first empty column
+
+            doc.setFontSize(12);
+            doc.text('Work Order Checklist', 14, 15);
+            doc.setFontSize(10);
+
+            // Add the table
+            doc.autoTable({
+                head: [headers],
+                body: data,
+                startY: 20,
+                theme: 'grid',
+                styles: { fontSize: 8 },
+                columnStyles: {
+                    0: { cellWidth: 20 },  // Reduced width for Loc column
+                    1: { cellWidth: 40 },
+                    2: { cellWidth: 20 },
+                    3: { cellWidth: 25 },
+                    4: { cellWidth: 60 },  // Increased width for Other Notes
+                    5: { cellWidth: 25 }
+                }
+            });
+
+            doc.save("work_order_checklist.pdf");
         }
 
         function generateQRCode() {
