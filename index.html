@@ -82,7 +82,6 @@
             <div class="center-content">
                 <input type="file" id="csvFile" accept=".csv" onchange="handleFileSelect(event)" class="form-control-file mb-3">
                 <button class="btn btn-primary mb-3" onclick="processCSV()">Process CSV</button>
-                <button class="btn btn-success mb-3" onclick="copyLink()">Copy Link for Mobile</button>
                 <button class="btn btn-info mb-3" onclick="downloadPDF()">Download PDF</button>
                 <button class="btn btn-info mb-3" onclick="generateQRCode()">Mobile Check</button>
                 <div id="linkContainer"></div>
@@ -194,40 +193,6 @@
             doc.save("work_order_checklist.pdf");
         }
 
-        async function copyLink() {
-            if (processedData.length === 0) {
-                alert("Please load and process a CSV file first.");
-                return;
-            }
-
-            try {
-                const response = await fetch('https://glasscheck.netlify.app/.netlify/functions/storeData', {
-                    method: 'POST',
-                    body: JSON.stringify(processedData),
-                });
-                const { id } = await response.json();
-
-                const mobileCheckUrl = `https://glasscheck.netlify.app/mobile-check.html?id=${id}`;
-
-                const linkContainer = document.getElementById("linkContainer");
-                linkContainer.innerHTML = `
-                    <p>Copy the link below and paste it into your mobile device:</p>
-                    <input type="text" value="${mobileCheckUrl}" id="mobileCheckLink" readonly style="width: 100%; padding: 10px; box-sizing: border-box;">
-                    <button class="btn btn-info" onclick="copyToClipboard()">Copy to Clipboard</button>
-                `;
-            } catch (error) {
-                console.error("Error generating link:", error);
-                alert("An error occurred while generating the link. Please try again.");
-            }
-        }
-
-        function copyToClipboard() {
-            const linkInput = document.getElementById("mobileCheckLink");
-            linkInput.select();
-            document.execCommand("copy");
-            alert("Link copied to clipboard!");
-        }
-
         function generateQRCode() {
             const qrCodeContainer = document.getElementById('qrCode');
             qrCodeContainer.innerHTML = '';
@@ -243,6 +208,8 @@
                         width: 256,
                         height: 256
                     });
+                } else if (xhr.readyState === XMLHttpRequest.DONE) {
+                    alert("An error occurred while generating the link. Please try again.");
                 }
             };
 
