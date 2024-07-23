@@ -113,6 +113,7 @@ app.get('/api/mobile-check', (req, res) => {
                     <button class="btn" onclick="submitChecklist()">Submit</button>
                 </div>
 
+                <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
                         const data = ${data};
