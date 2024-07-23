@@ -6,14 +6,14 @@ const uuid = require('uuid');
 const app = express();
 app.use(cors());
 app.use(fileUpload());
-app.use(express.static('public'));
+app.use(express.static('public')); // Serve static files from the 'public' directory
 
 // In-memory storage
 const dataStorage = {};
 
 // Root route
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(__dirname + '/public/index.html'); // Serve the index.html file
 });
 
 app.post('/api/upload', (req, res) => {
@@ -112,6 +112,7 @@ app.get('/api/mobile-check', (req, res) => {
                         <button class="btn" onclick="submitChecklist()">Submit</button>
                     </div>
 
+                    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
                     <script>
                         document.addEventListener('DOMContentLoaded', () => {
                             const data = ${data};
