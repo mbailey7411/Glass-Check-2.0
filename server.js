@@ -1,19 +1,15 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
-const fs = require('fs');
-const path = require('path');
-const uuid = require('uuid');
 const cors = require('cors');
+const uuid = require('uuid');
 
 const app = express();
 app.use(cors());
 app.use(fileUpload());
 app.use(express.static('public'));
 
-const dataDirectory = path.join(__dirname, 'data');
-if (!fs.existsSync(dataDirectory)) {
-    fs.mkdirSync(dataDirectory);
-}
+// In-memory storage
+const dataStorage = {};
 
 app.post('/api/upload', (req, res) => {
     try {
@@ -23,15 +19,11 @@ app.post('/api/upload', (req, res) => {
 
         const data = JSON.parse(req.body.data);
         const uniqueId = uuid.v4();
-        const filePath = path.join(dataDirectory, `${uniqueId}.json`);
 
-        fs.writeFile(filePath, JSON.stringify(data), err => {
-            if (err) {
-                console.error('Failed to save data:', err);
-                return res.status(500).send('Failed to save data.');
-            }
-            res.send({ url: `https://${process.env.VERCEL_URL}/api/mobile-check?id=${uniqueId}` });
-        });
+        // Store data in-memory
+        dataStorage[uniqueId] = data;
+
+        res.send({ url: `https://${process.env.VERCEL_URL}/api/mobile-check?id=${uniqueId}` });
     } catch (error) {
         console.error('Error in /api/upload:', error);
         res.status(500).send('Internal Server Error');
@@ -41,10 +33,10 @@ app.post('/api/upload', (req, res) => {
 app.get('/api/mobile-check', (req, res) => {
     try {
         const id = req.query.id;
-        const filePath = path.join(dataDirectory, `${id}.json`);
 
-        if (fs.existsSync(filePath)) {
-            const data = fs.readFileSync(filePath, 'utf8');
+        // Retrieve data from in-memory storage
+        if (dataStorage[id]) {
+            const data = JSON.stringify(dataStorage[id]);
             res.send(`
                 <!DOCTYPE html>
                 <html lang="en">
