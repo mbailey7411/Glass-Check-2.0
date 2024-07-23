@@ -132,12 +132,12 @@ app.get('/api/mobile-check', (req, res) => {
                                 const itemContainer = document.createElement('div');
                                 itemContainer.className = 'item';
 
-                                itemContainer.innerHTML = `
+                                itemContainer.innerHTML = \`
                                     <label>
-                                        <input type="checkbox" name="check${index}" value="checked"> ${item[1]} (${item[3]} - ${item[4]})
+                                        <input type="checkbox" name="check\${index}" value="checked"> \${item[1]} (\${item[3]} - \${item[4]})
                                     </label>
-                                    <textarea name="issue${index}" placeholder="Note any issues here..."></textarea>
-                                `;
+                                    <textarea name="issue\${index}" placeholder="Note any issues here..."></textarea>
+                                \`;
                                 form.appendChild(itemContainer);
                             });
                         }
