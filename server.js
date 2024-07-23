@@ -3,8 +3,10 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const path = require('path');
 const uuid = require('uuid');
+const cors = require('cors');  // Add this line
 
 const app = express();
+app.use(cors());  // Add this line
 app.use(fileUpload());
 app.use(express.static('public'));
 
@@ -13,7 +15,7 @@ if (!fs.existsSync(dataDirectory)) {
     fs.mkdirSync(dataDirectory);
 }
 
-app.post('/upload', (req, res) => {
+app.post('/api/upload', (req, res) => {
     if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
     }
@@ -27,11 +29,11 @@ app.post('/upload', (req, res) => {
         if (err) {
             return res.status(500).send('Failed to save data.');
         }
-        res.send({ url: `https://mbailey7411.github.io/Glass-Check-2.0/mobile-check.html?id=${uniqueId}` });
+        res.send({ url: `https://${process.env.VERCEL_URL}/api/mobile-check?id=${uniqueId}` });
     });
 });
 
-app.get('/mobile-check', (req, res) => {
+app.get('/api/mobile-check', (req, res) => {
     const id = req.query.id;
     const filePath = path.join(dataDirectory, `${id}.json`);
 
@@ -169,7 +171,7 @@ app.get('/mobile-check', (req, res) => {
                     function sendEmail(data) {
                         const email = 'support@2020glass.com';
                         const subject = 'Checklist Results';
-                        const body = encodeURIComponent('Incomplete Items:\n\n' + JSON.stringify(data, null, 2));
+                        const body = encodeURIComponent('Incomplete Items:\\n\\n' + JSON.stringify(data, null, 2));
                         window.location.href = \`mailto:\${email}?subject=\${subject}&body=\${body}\`;
                     }
                 </script>
